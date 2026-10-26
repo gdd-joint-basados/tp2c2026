@@ -203,7 +203,7 @@ GO
 CREATE TABLE [JOINT_BASADOS].[Tipos_De_Productos] (
     id INT IDENTITY (1,1) PRIMARY KEY,
     tipo VARCHAR(50),
-    activo BIT
+    activo BIT DEFAULT 1
 );
 GO
 
@@ -250,3 +250,149 @@ CREATE TABLE [JOINT_BASADOS].[Detalles_Ventas] (
     subtotal DECIMAL(10,2) NOT NULL
 );
 GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Marcas]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Marcas] (nombre)
+    SELECT DISTINCT [Marca_Marca] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Marca_Marca] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Marcas];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Categoria_Accesorios]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Categorias_Accesorios] (nombre)
+    SELECT DISTINCT [Categoria_Accesorios_Categoria_Accesorio] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Categoria_Accesorios_Categoria_Accesorio] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Categoria_Accesorios];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Categorias_Bicicletas]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Categorias_Bicicletas] (categoria)
+    SELECT DISTINCT [Categoria_Bicicleta_Categoria_Bicicleta] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Categoria_Bicicleta_Categoria_Bicicleta] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Categorias_Bicicletas];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Estado_Bicicleta_Alquiler]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Estados_Bicicletas_Alquileres] (descripcion)
+    SELECT DISTINCT [Estado_Bici_Alquiler_Estado_Bici_Alquiler] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Estado_Bici_Alquiler_Estado_Bici_Alquiler] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Estado_Bicicleta_Alquiler];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Categorias_Repuestos]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Categorias_Repuestos] (categoria)
+    SELECT DISTINCT [Categoria_Repuestos_Categoria_Respuesto] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Categoria_Repuestos_Categoria_Respuesto] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Categorias_Repuestos];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Estados_Alquiler]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Estados_Alquileres] (descripcion)
+    SELECT DISTINCT [Estado_Alquiler_Estado_Alquiler] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Estado_Alquiler_Estado_Alquiler] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Estados_Alquiler];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Estados_Reparaciones]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Estados_Reparaciones] (descripcion)
+    SELECT DISTINCT [Estado_Reparacion_Estado_Reparacion] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Estado_Reparacion_Estado_Reparacion] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Estados_Reparaciones];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Provincias]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Provincias] (nombre)
+    SELECT [Cliente_Provincia] FROM [gd_esquema].[maestra] WHERE [Cliente_Provincia] IS NOT NULL
+    UNION
+    SELECT [Empleado_Provincia] FROM [gd_esquema].[maestra] WHERE [Empleado_Provincia] IS NOT NULL
+    UNION
+    SELECT [Local_Provincia] FROM [gd_esquema].[maestra] WHERE [Local_Provincia] IS NOT NULL
+    UNION
+    SELECT [Proveedor_Provincia] FROM [gd_esquema].[maestra] WHERE [Proveedor_Provincia] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Provincias];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Formas_de_Pago]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Formas_De_Pago] (descripcion)
+    SELECT DISTINCT [Forma_Pago_Forma_Pago] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Forma_Pago_Forma_Pago] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Formas_de_Pago];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Tipos_de_Productos]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Tipos_De_Productos] (tipo)
+    SELECT DISTINCT [Tipo_Producto_Tipo_Producto] 
+    FROM [gd_esquema].[maestra] 
+    WHERE [Tipo_Producto_Tipo_Producto] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Tipos_de_Productos];
+GO
+
+SELECT * FROM [JOINT_BASADOS].[Marcas]
+SELECT * FROM [JOINT_BASADOS].[Categorias_Accesorios]
+SELECT * FROM [JOINT_BASADOS].[Categorias_Bicicletas]
+SELECT * FROM [JOINT_BASADOS].[Estados_Bicicletas_Alquileres]
+SELECT * FROM [JOINT_BASADOS].[Categorias_Repuestos]
+SELECT * FROM [JOINT_BASADOS].[Estados_Alquileres]
+SELECT * FROM [JOINT_BASADOS].[Estados_Reparaciones]
+SELECT * FROM [JOINT_BASADOS].[Provincias]
+SELECT * FROM [JOINT_BASADOS].[Formas_De_Pago]
+SELECT * FROM [JOINT_BASADOS].[Tipos_De_Productos]
+

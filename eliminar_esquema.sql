@@ -1,6 +1,19 @@
 USE GD2C_2026;
 GO
 
+-- 0. Eliminar stored procedureeçs
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Marcas];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Categoria_Accesorios];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Categorias_Bicicletas];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Categorias_Repuestos];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Estado_Bicicleta_Alquiler];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Estados_Alquiler];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Estados_Reparaciones];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Provincias];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Formas_de_Pago];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[Migrar_Tipos_de_Productos];
+
+
 -- 1. Eliminar tablas dependientes (Hijas)
 DROP TABLE IF EXISTS [JOINT_BASADOS].[Detalles_Ventas];
 DROP TABLE IF EXISTS [JOINT_BASADOS].[Detalles_Compras];
