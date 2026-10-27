@@ -18,18 +18,18 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Modelos_Bicicletas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    nro_rodado VARCHAR(255) NOT NULL,
-    talle_cuadro VARCHAR(255) NOT NULL,
-    color VARCHAR(255) NOT NULL,
-    categoria_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Categorias_Bicicletas](id),
-    marca_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
+    nombre VARCHAR(255)  NULL,
+    nro_rodado VARCHAR(255)  NULL,
+    talle_cuadro VARCHAR(255)  NULL,
+    color VARCHAR(255)  NULL,
+    categoria_id INT  NULL REFERENCES [JOINT_BASADOS].[Categorias_Bicicletas](id),
+    marca_id INT  NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Categorias_Accesorios] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL
+    nombre VARCHAR(255)  NULL
 );
 GO
 
@@ -38,7 +38,7 @@ CREATE TABLE [JOINT_BASADOS].[Accesorios] (
     talle VARCHAR(255),
     color VARCHAR(255),
     categoria_accesorio_id INT REFERENCES [JOINT_BASADOS].[Categorias_Accesorios](id),
-    marca_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
+    marca_id INT  NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
 );
 GO
 -- CAMBIO "nro de seria" a "id" porque en la tabla master el nro de serie para bicis en ventas no existe, pero según el enunciado podemos crear más columnas que nos e llenen con datos inventados--
@@ -51,13 +51,13 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Estados_Bicicletas_Alquileres] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    descripcion VARCHAR(255) NOT NULL
+    descripcion VARCHAR(255)  NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Provincias] (
-    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL
+    id INT IDENTITY(1,1)  NULL PRIMARY KEY,
+    nombre VARCHAR(255)  NULL
 );
 GO
 
