@@ -6,7 +6,7 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Marcas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL
+    nombre VARCHAR(255)  NULL
 );
 GO
 
