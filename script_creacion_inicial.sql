@@ -12,7 +12,7 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Categorias_Bicicletas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    categoria VARCHAR(255) NOT NULL
+    categoria VARCHAR(255)  NULL
 );
 GO
 
