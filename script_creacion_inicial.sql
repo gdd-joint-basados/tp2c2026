@@ -6,22 +6,22 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Marcas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255)  NULL
+    nombre VARCHAR(255) NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Categorias_Bicicletas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    categoria VARCHAR(255) NULL
+    categoria VARCHAR(255) NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Modelos_Bicicletas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255)  NULL,
-    nro_rodado VARCHAR(255)  NULL,
-    talle_cuadro VARCHAR(255)  NULL,
-    color VARCHAR(255)  NULL,
+    nombre VARCHAR(255) NOT NULL,
+    nro_rodado VARCHAR(255)  NOT NULL,
+    talle_cuadro VARCHAR(255) NOT NULL,
+    color VARCHAR(255)  NOT NULL,
     categoria_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Categorias_Bicicletas](id),
     marca_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
 );
@@ -29,14 +29,14 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Categorias_Accesorios] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre VARCHAR(255)  NULL
+    nombre VARCHAR(255) NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Accesorios] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    talle VARCHAR(255),
-    color VARCHAR(255),
+    talle VARCHAR(255) NOT NULL,
+    color VARCHAR(255) NOT NULL,
     categoria_accesorio_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Categorias_Accesorios](id),
     marca_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Marcas](id)
 );
@@ -44,35 +44,35 @@ GO
 -- CAMBIO "nro de seria" a "id" porque en la tabla master el nro de serie para bicis en ventas no existe, pero según el enunciado podemos crear más columnas que nos e llenen con datos inventados--
 CREATE TABLE [JOINT_BASADOS].[Bicicletas_Ventas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    modelo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Modelos_Bicicletas](id),
+    modelo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Modelos_Bicicletas](id)
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Estados_Bicicletas_Alquileres] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    descripcion VARCHAR(255)  NULL
+    descripcion VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Provincias] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    nombre VARCHAR(255)  NULL
+    nombre VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Localidades] (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre VARCHAR(255)  NULL,
+    nombre VARCHAR(255)  NOT NULL,
     provincia_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Provincias](id)
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Locales] (
   id INT IDENTITY (1,1) PRIMARY KEY,
-  nombre VARCHAR(255)  NULL,
-  telefono VARCHAR(255)  NULL,
-  email VARCHAR(255)  NULL,
-  direccion VARCHAR(255)  NULL,
+  nombre VARCHAR(255)  NOT NULL,
+  telefono VARCHAR(255)  NOT NULL,
+  email VARCHAR(255)  NOT NULL,
+  direccion VARCHAR(255)  NOT NULL,
   localidad_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Localidades](id)
 );
 GO
@@ -80,8 +80,8 @@ GO
 CREATE TABLE [JOINT_BASADOS].[Bicicletas_Alquileres] (
  nro_serie VARCHAR(255) PRIMARY KEY,
  modelo_id INT  NOT NULL  REFERENCES [JOINT_BASADOS].[Modelos_Bicicletas](id),
- precio_hora DECIMAL(38,2),
- precio_dia DECIMAL(38,2),
+ precio_hora DECIMAL(38,2) NOT NULL,
+ precio_dia DECIMAL(38,2) NOT NULL,
  estado_id INT  NOT NULL  REFERENCES [JOINT_BASADOS].[Estados_Bicicletas_Alquileres](id),
  local_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Locales](id)
 );
@@ -89,28 +89,28 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Clientes] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    nombre VARCHAR(255)  NULL,
-    apellido VARCHAR(255)  NULL,
-    dni VARCHAR(255)  NULL,
-    telefono VARCHAR(255)  NULL,
-    email VARCHAR(255)  NULL,
-    direccion VARCHAR(255)  NULL,
-    fecha_nacimiento DATETIME2  NULL,
+    nombre VARCHAR(255)  NOT NULL,
+    apellido VARCHAR(255)  NOT NULL,
+    dni VARCHAR(255)  NOT NULL,
+    telefono VARCHAR(255)  NOT NULL,
+    email VARCHAR(255)  NOT NULL,
+    direccion VARCHAR(255)  NOT NULL,
+    fecha_nacimiento DATETIME2  NOT NULL,
     localidad_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Localidades](id)
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Empleados] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    nombre VARCHAR(255)  NULL,
-    apellido VARCHAR(255)  NULL,
-    dni VARCHAR(255)  NULL,
-    puesto VARCHAR(255)  NULL,
-    fecha_ingreso DATETIME2  NULL,
-    telefono VARCHAR(255) NULL,
-    email  VARCHAR(255) NULL,
-    domicilio VARCHAR(255) NULL,
-    fecha_de_nacimiento DATETIME2 NULL,
+    nombre VARCHAR(255)  NOT NULL,
+    apellido VARCHAR(255)  NOT NULL,
+    dni VARCHAR(255)  NOT NULL,
+    puesto VARCHAR(255)  NOT NULL,
+    fecha_ingreso DATETIME2  NOT NULL,
+    telefono VARCHAR(255) NOT NULL,
+    email  VARCHAR(255) NOT NULL,
+    domicilio VARCHAR(255) NOT NULL,
+    fecha_de_nacimiento DATETIME2 NOT NULL,
     localidad_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Localidades] (id),
     local_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Locales](id)
 );
@@ -118,33 +118,33 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Formas_De_Pago] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    descripcion VARCHAR(255)  NULL
+    descripcion VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Estados_Alquileres] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    descripcion VARCHAR(255)  NULL
+    descripcion VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Estados_Reparaciones] (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    descripcion VARCHAR(255)  NULL
+    descripcion VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Categorias_Repuestos] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    categoria VARCHAR(255)  NULL
+    categoria VARCHAR(255)  NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Repuestos] (
     cod_repuesto VARCHAR(255) PRIMARY KEY,
-    descripcion VARCHAR(MAX)  NULL,
-    compatibilidad VARCHAR(MAX)  NULL,
-    precio DECIMAL(38,2)  NULL,
+    descripcion VARCHAR(MAX)  NOT NULL,
+    compatibilidad VARCHAR(MAX)  NOT NULL,
+    precio DECIMAL(38,2)  NOT NULL,
     categoria_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Categorias_Repuestos](id)
 );
 GO
@@ -153,10 +153,10 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Alquileres] (
     nro_alquiler INT PRIMARY KEY,
-    fecha_inicio DATETIME2   NULL,
-    fecha_fin_pactada DATETIME2   NULL,
-    fecha_devolucion_real DATETIME2   ,
-    importe_total NUMERIC(38,2)  NULL,
+    fecha_inicio DATETIME2 NOT NULL,
+    fecha_fin_pactada DATETIME2  NOT NULL,
+    fecha_devolucion_real DATETIME2  NULL,
+    importe_total NUMERIC(38,2)   NULL,
     nro_serie_bicicleta VARCHAR(255)  NOT NULL REFERENCES [JOINT_BASADOS].[Bicicletas_Alquileres](nro_serie),
     estado_alquiler_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Estados_Alquileres](id),
     cliente_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Clientes](id),
@@ -171,21 +171,21 @@ CREATE TABLE [JOINT_BASADOS].[Reparaciones] (
     cliente_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Clientes](id),
     empleado_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Empleados](id),
     estado_reparacion_id INT NOT NULL  REFERENCES [JOINT_BASADOS].[Estados_Reparaciones](id),
-    fecha_ingreso DATETIME2  NULL,
-    fecha_entrega_estimada DATETIME2  NULL,
+    fecha_ingreso DATETIME2  NOT NULL,
+    fecha_entrega_estimada DATETIME2  NOT NULL,
     fecha_entrega_real DATETIME2 NULL,
     diagnostico VARCHAR(MAX) NULL,
-    precio_mano_obra DECIMAL(38,2) NULL,
-    precio_repuestos DECIMAL(38,2) NULL,
-    precio_total DECIMAL(38,2) NULL
+    precio_mano_obra DECIMAL(38,2) NOT NULL,
+    precio_repuestos DECIMAL(38,2) NOT NULL,
+    precio_total DECIMAL(38,2) NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Detalles_Reparaciones] (
     id INT IDENTITY(1,1)  PRIMARY KEY,
-    cantidad_repuesto INT  NULL,
-    precio_unitario DECIMAL(38,2)  NULL,
-    subtotal DECIMAL(38,2)  NULL,
+    cantidad_repuesto INT  NOT NULL,
+    precio_unitario DECIMAL(38,2)  NOT NULL,
+    subtotal DECIMAL(38,2)  NOT NULL,
     cod_repuesto VARCHAR(255)  NOT NULL REFERENCES [JOINT_BASADOS].[Repuestos](cod_repuesto),
     reparacion_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Reparaciones](nro_reparacion)
 );
@@ -193,11 +193,11 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Proveedores] (
     id INT IDENTITY (1,1)  PRIMARY KEY,
-    razon_social VARCHAR(255)  NULL,
-    cuit VARCHAR(255)  NULL,
-    telefono VARCHAR(255)  NULL,
-    email VARCHAR(255)  NULL,
-    direccion VARCHAR(255)  NULL,
+    razon_social VARCHAR(255)  NOT NULL,
+    cuit VARCHAR(255)  NOT NULL,
+    telefono VARCHAR(255)  NOT NULL,
+    email VARCHAR(255)  NOT NULL,
+    direccion VARCHAR(255)  NOT NULL,
     localidad_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Localidades](id)
 );
 GO
@@ -206,8 +206,8 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Compras] (
     nro_compra INT PRIMARY KEY,
-    fecha DATETIME2  NULL,
-    total DECIMAL(38,2)  NULL,
+    fecha DATETIME2  NOT NULL,
+    total DECIMAL(38,2)  NOT NULL,
     proveedor_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Proveedores](id),
     empleado_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Empleados](id)
 );
@@ -215,19 +215,19 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[Tipos_De_Productos] (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    tipo VARCHAR(255) NULL
+    tipo VARCHAR(255) NOT NULL
 );
 GO
 
 CREATE TABLE [JOINT_BASADOS].[Productos] (
     cod_producto VARCHAR(255)  PRIMARY KEY,
-    nombre VARCHAR(255)  NULL,
-    descripcion VARCHAR(255) NULL,
-    precio_venta DECIMAL(38,2) NULL,
+    nombre VARCHAR(255)  NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    precio_venta DECIMAL(38,2) NOT NULL,
     tipo_producto_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Tipos_De_Productos](id),
-    accesorio_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Accesorios](id),
-    bicicleta_venta_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Bicicletas_Ventas](id),
-    garantia_en_meses INT NULL
+    accesorio_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Accesorios](id),
+    bicicleta_venta_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Bicicletas_Ventas](id),
+    garantia_en_meses INT NOT NULL
 );
 GO
 
@@ -235,16 +235,16 @@ CREATE TABLE [JOINT_BASADOS].[Detalles_Compras] (
     id INT IDENTITY (1,1)  PRIMARY KEY,
     nro_compra INT NOT NULL REFERENCES [JOINT_BASADOS].[Compras](nro_compra),
     cod_producto VARCHAR(255) NOT NULL REFERENCES [JOINT_BASADOS].[Productos](cod_producto),
-    cantidad_prod INT  NULL,
-    precio_unitario DECIMAL(38,2)  NULL,
-    subtotal DECIMAL(38,2) NULL
+    cantidad_prod INT  NOT NULL,
+    precio_unitario DECIMAL(38,2) NOT NULL,
+    subtotal DECIMAL(38,2) NOT NULL
 );
 GO 
 
 CREATE TABLE [JOINT_BASADOS].[Ventas] (
     nro_venta INT PRIMARY KEY,
-    fecha_hora DATETIME2  NULL,
-    total DECIMAL(38,2)  NULL,
+    fecha_hora DATETIME2 NOT NULL,
+    total DECIMAL(38,2) NOT NULL,
     forma_pago_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Formas_De_Pago](id),
     local_id INT  NOT NULL REFERENCES [JOINT_BASADOS].[Locales](id),
     cliente_id INT NOT NULL REFERENCES [JOINT_BASADOS].[Clientes](id),
@@ -256,9 +256,9 @@ CREATE TABLE [JOINT_BASADOS].[Detalles_Ventas] (
     id INT IDENTITY (1,1) PRIMARY KEY,
     nro_venta INT NOT NULL REFERENCES [JOINT_BASADOS].[Ventas](nro_venta),
     cod_producto VARCHAR(255) NOT NULL REFERENCES [JOINT_BASADOS].[Productos](cod_producto),
-    cantidad INT  NULL,
-    precio_unitario DECIMAL(38,2)  NULL,
-    subtotal DECIMAL(38,2)  NULL
+    cantidad INT NOT NULL,
+    precio_unitario DECIMAL(38,2) NOT NULL,
+    subtotal DECIMAL(38,2) NOT NULL
 );
 GO
 
