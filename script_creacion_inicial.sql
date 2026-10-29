@@ -487,6 +487,94 @@ GO
 EXEC [JOINT_BASADOS].[Migrar_Bicicletas_Alquileres];
 GO
 
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Proveedores]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Proveedores] (razon_social,cuit,telefono,email,direccion,localidad_id)
+    SELECT m.[Proveedor_Razon_Social_Proveedor],m.[Proveedor_Cuit_Proveedor],m.[Proveedor_Telefono_Proveedor],m.[Proveedor_Email_Proveedor],m.[Proveedor_Direccion_Proveedor],localidades.id
+    FROM [gd_esquema].[maestra] m 
+	JOIN [JOINT_BASADOS].[Localidades] localidades
+		ON localidades.nombre = m.[Proveedor_Localidad]
+    WHERE m.[Proveedor_Localidad] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Proveedores];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Locales]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Locales] (nombre,telefono,email,direccion,localidad_id)
+    SELECT m.[Local_Nombre_Local],m.[Local_Telefono_Local],m.[Local_Email_Local],m.[Local_Direccion_Local],localidades.id
+    FROM [gd_esquema].[maestra] m
+	JOIN [JOINT_BASADOS].[Localidades] localidades
+		ON localidades.nombre = m.[Local_Localidad]
+    WHERE m.[Local_Localidad] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Locales];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Empleados]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Empleados] (nombre,apellido,dni,puesto,fecha_ingreso,telefono,email,domicilio,fecha_de_nacimiento,localidad_id,local_id)
+    SELECT m.[Empleado_Nombre_Empleado],m.[Empleado_Apellido_Empleado],m.[Empleado_Dni_Empleado],m.[Empleado_Puesto_Empleado],m.[Empleado_Fecha_Ingreso_Empleado],m.[Empleado_Telefono_Empleado],m.[Empleado_Email_Empleado],m.[Empleado_Domicilio_Empleado],m.[Empleado_Fecha_Nac_Empleado],m.[Empleado_Localidad],localidades.id,loc.id
+    FROM [gd_esquema].[maestra] m
+	JOIN [JOINT_BASADOS].[Locales] loc
+		ON loc.nombre = m.[Local_Nombre_Local]
+	JOIN [JOINT_BASADOS].[Localidades] localidades
+		ON localidades.nombre = m.[Local_Localidad]
+    WHERE m.[Empleado_Localidad] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Empleados];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Compras]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Compras] (nro_compra,fecha,total,proveedor_id,empleado_id)
+    SELECT m.[Compra_Nro_Compra],m.[Compra_Fecha_Compra],m.[Compra_Total_Compra],p.id,e.id
+    FROM [gd_esquema].[maestra] m
+	JOIN [JOINT_BASADOS].[Proveedores] p
+		ON p.razon_social = m.[Proveedor_Razon_Social_Proveedor]
+	JOIN [JOINT_BASADOS].[Empleados] e
+		ON e.nombre = m.[Empleado_Nombre_Empleado] AND e.apellido = m.[Empleado_Apellido_Empleado]
+    WHERE m.[Compra_Nro_Compra] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Compras];
+GO
+    
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Alquileres]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Alquileres] (nro_alquiler,fecha_inicio,fecha_fin_pactada,fecha_devolucion_real,importe_total,nro_serie_bicicleta,estado_alquiler_id,cliente_id,empleado_id,forma_pago_id)
+    SELECT m.[Alquiler_Nro_Alquiler],m.[Alquiler_Fecha_Inicio_Alquiler],m.[Alquiler_Fecha_Fin_Pactada_Alquiler],m.[Alquiler_Fecha_Devolucion_Real_Alquiler],m.[Alquiler_Importe_Total_Alquiler],ba.nro_serie,ea.id,c.id,e.id,fp.id
+    FROM [gd_esquema].[maestra] m
+	JOIN [JOINT_BASADOS].[Bicicletas_Alquileres] ba
+		ON ba.nro_serie = m.[Bicicleta_Alquiler_Nro_Serie_Bici_Alquiler]
+	JOIN [JOINT_BASADOS].[Estados_Alquileres] ea
+		ON ea.descripcion = m.[Estado_Alquiler_Estado_Alquiler]
+	JOIN [JOINT_BASADOS].[Clientes] c
+		ON c.nombre = m.[Cliente_Nombre_Cliente] AND c.apellido = m.[Cliente_Apellido_Cliente]
+	JOIN [JOINT_BASADOS].[Empleados] e
+		ON e.nombre = m.[Empleado_Nombre_Empleado] AND e.apellido = m.[Empleado_Apellido_Empleado]
+	JOIN [JOINT_BASADOS].[Formas_De_Pago] fp
+		ON fp.descripcion = m.[Forma_Pago_Forma_Pago]
+    WHERE m.[Alquiler_Nro_Alquiler] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Alquileres];
+GO
+
+
 CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Repuestos]
 AS
 BEGIN
@@ -519,6 +607,30 @@ BEGIN
 END
 GO
 EXEC [JOINT_BASADOS].[Migrar_Detalles_Reparaciones];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Reparaciones]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Reparaciones] (nro_reparacion,modelo_id,cliente_id,empleado_id,estado_reparacion_id,fecha_ingreso,fecha_entrega_estimada,fecha_entrega_real,diagnostico,precio_mano_obra,precio_repuestos,precio_total)
+    SELECT m.[Reparacion_Nro_Reparacion],mb.id,c.id,e.id,er.id,m.[Reparacion_Fecha_Ingreso_Reparacion],m.[Reparacion_Fecha_Entrega_Estimada_Reparacion],m.[Reparacion_Fecha_Entrega_Real_Reparacion],m.[Reparacion_Diagnostico_Reparacion],m.[Reparacion_Precio_Mano_Obra_Reparacion],m.[Reparacion_Precio_Repuestos_Reparacion],m.[Reparacion_Precio_Total_Reparacion]
+    FROM [gd_esquema].[maestra] m
+	JOIN [JOINT_BASADOS].[Modelos_Bicicletas] mb
+                  ON mb.nombre = m.[Modelo_Bicicleta_Modelo_Bicicleta]
+                      AND mb.nro_rodado = m.[Modelo_Bicicleta_Rodado_Modelo_Bicicleta]
+                      AND mb.talle_cuadro = m.[Modelo_Bicicleta_Cuadro_Modelo_Bicicleta]
+                      AND mb.color = m.[Modelo_Bicicleta_Color_Modelo_Bicicleta]
+	JOIN [JOINT_BASADOS].[Clientes] c
+		ON c.nombre = m.[Cliente_Nombre_Cliente] AND c.apellido = m.[Cliente_Apellido_Cliente]
+	JOIN [JOINT_BASADOS].[Empleados] e
+		ON e.nombre = m.[Empleado_Nombre_Empleado] AND e.apellido = m.[Empleado_Apellido_Empleado]
+	JOIN [JOINT_BASADOS].[Estados_Reparaciones] er
+		ON er.descripcion = m.[Estado_Reparacion_Estado_Reparacion]
+    WHERE m.[Reparacion_Nro_Reparacion] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Reparaciones];
 GO
 
 SELECT * FROM [JOINT_BASADOS].[Marcas]
