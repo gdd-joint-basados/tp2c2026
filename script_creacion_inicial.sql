@@ -633,6 +633,149 @@ GO
 EXEC [JOINT_BASADOS].[Migrar_Reparaciones];
 GO
 
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Productos]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Productos] (cod_producto, nombre, descripcion, precio_venta, tipo_producto_id, accesorio_id, bicicleta_venta_id, garantia_en_meses)
+    SELECT DISTINCT
+        m.Producto_Cod_Producto,
+        m.Producto_Nombre_Producto,
+        m.Producto_Descripcion_Producto,
+        m.Producto_Precio_Venta_Producto,
+        tp.id,
+        a.id,
+        bv.id,
+        m.Bicicleta_Venta_Meses_Garantia_Bici_Venta
+    FROM [gd_esquema].[maestra] m
+        JOIN [JOINT_BASADOS].Tipos_De_Productos tp
+            ON (tp.tipo = m.Tipo_Producto_Tipo_Producto)
+        JOIN [JOINT_BASADOS].Accesorios a
+            ON (m.Accesorio_Color_Accesorio = a.color
+                AND m.Accesorio_Talle_Accesorio = a.talle)
+        JOIN [JOINT_BASADOS].Bicicletas_Ventas bv
+            ON (bv.cod_producto = m.Producto_Cod_Producto)
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Productos];
+GO
+
+
+-- Hay q migrar previamente COD PRODUCTO Y NRO DE COMPRA
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Detalles_Compras]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Detalles_Compras] (cantidad_prod, precio_unitario, cod_producto, nro_compra)
+    SELECT DISTINCT
+        m.Detalle_Compra_Cantidad_Prod_Compra,
+        m.Detalle_Compra_Precio_Unitario_Prod_Compra,
+        p.cod_producto, -- cod producto fk
+        c.nro_compra -- nro de compra fk
+    FROM [gd_esquema].[maestra] m
+    JOIN [JOINT_BASADOS].[Productos] p
+        ON (p.cod_producto = m.Producto_Cod_Producto)
+    JOIN [JOINT_BASADOS].[Compras] c
+        ON (c.nro_compra = m.Compra_Nro_Compra)
+    WHERE [Detalle_Compra_Cantidad_Prod_Compra] IS NOT NULL
+    AND [Detalle_Compra_Precio_Unitario_Prod_Compra] IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Detalles_Compras];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Localidades]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Localidades] (nombre, provincia_id)
+        SELECT 
+        m.localidad,
+        p.id
+        FROM (  
+            SELECT [Cliente_Localidad] localidad, [Cliente_Provincia] provincia FROM [gd_esquema].[maestra] WHERE [Cliente_Localidad] IS NOT NULL
+            UNION
+            SELECT [Empleado_Localidad] localidad, [Empleado_Provincia] provincia FROM [gd_esquema].[maestra] WHERE [Empleado_Localidad]IS NOT NULL
+            UNION
+            SELECT [Local_Localidad] localidad, [Local_Provincia] provincia FROM [gd_esquema].[maestra] WHERE [Local_Localidad] IS NOT NULL
+            UNION
+            SELECT [Proveedor_Localidad] localidad, [Proveedor_Provincia] provincia FROM [gd_esquema].[maestra] WHERE [Proveedor_Localidad] IS NOT NULL
+        ) m
+        JOIN [JOINT_BASADOS].Provincias p ON (p.nombre = m.provincia)
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Localidades];
+GO
+ 
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Clientes]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Clientes] (nombre, apellido, dni, telefono, email, direccion, fecha_nacimiento, localidad_id)
+    SELECT DISTINCT
+        m.Cliente_Nombre_Cliente,
+        m.Cliente_Apellido_Cliente,
+        m.Cliente_Dni_Cliente,
+        m.Cliente_Telefono_Cliente,
+        m.Cliente_Email_Cliente,
+        m.Cliente_Direccion_Cliente,
+        m.Cliente_Fecha_Nacimiento_Cliente,
+        l.id
+    FROM [gd_esquema].[maestra] m
+        JOIN [JOINT_BASADOS].Provincias p
+            ON (p.nombre = m.Cliente_Provincia)
+        JOIN [JOINT_BASADOS].Localidades l
+            ON (l.nombre = m.Cliente_Localidad AND p.id = l.provincia_id)
+    WHERE m.Cliente_Nombre_Cliente IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Clientes];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Ventas]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Ventas] (nro_venta, fecha_hora, total, forma_pago_id, local_id, cliente_id, empleado_id)
+    SELECT DISTINCT
+        m.Venta_Nro_Venta,
+        m.Venta_Fecha_Hora_Venta,
+        m.Venta_Total_Venta,
+        fpago.id,
+        l.id,
+        c.id,
+        e.id
+    FROM [gd_esquema].[maestra] m 
+        JOIN [JOINT_BASADOS].Formas_De_Pago fpago ON (fpago.descripcion = m.Forma_Pago_Forma_Pago) 
+        JOIN [JOINT_BASADOS].Locales l ON (m.Local_Direccion_Local = l.direccion)
+        JOIN [JOINT_BASADOS].Clientes c ON (m.Cliente_Dni_Cliente = c.dni)
+        JOIN [JOINT_BASADOS].Empleados e ON (m.Empleado_Dni_Empleado = e.dni)
+    WHERE m.Venta_Nro_Venta IS NOT NULL;
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Ventas];
+GO
+
+CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Detalles_Ventas]
+AS
+BEGIN
+    INSERT INTO [JOINT_BASADOS].[Detalles_Ventas] (cantidad, precio_unitario, subtotal, cod_producto, nro_venta)
+    SELECT DISTINCT
+        m.Detalle_Venta_Cantidad_Prod_Venta,
+        m.Detalle_Venta_Precio_Unitario_Prod_Venta,
+        m.Detalle_Venta_Subtotal_Prod_Venta,
+        p.cod_producto,
+        v.nro_venta
+    FROM [gd_esquema].[maestra] m
+        JOIN [JOINT_BASADOS].[Productos] p ON (m.Producto_Cod_Producto = p.cod_producto)
+        JOIN [JOINT_BASADOS].Ventas v ON (m.Venta_Nro_Venta = v.nro_venta)
+END;
+GO
+
+EXEC [JOINT_BASADOS].[Migrar_Detalles_Ventas];
+GO
+
+
 SELECT * FROM [JOINT_BASADOS].[Marcas]
 SELECT * FROM [JOINT_BASADOS].[Categorias_Accesorios]
 SELECT * FROM [JOINT_BASADOS].[Categorias_Bicicletas]
@@ -641,6 +784,7 @@ SELECT * FROM [JOINT_BASADOS].[Categorias_Repuestos]
 SELECT * FROM [JOINT_BASADOS].[Estados_Alquileres]
 SELECT * FROM [JOINT_BASADOS].[Estados_Reparaciones]
 SELECT * FROM [JOINT_BASADOS].[Provincias]
+SELECT * FROM [JOINT_BASADOS].[Localidades]
 SELECT * FROM [JOINT_BASADOS].[Formas_De_Pago]
 SELECT * FROM [JOINT_BASADOS].[Tipos_De_Productos]
 SELECT * FROM [JOINT_BASADOS].[Accesorios]
