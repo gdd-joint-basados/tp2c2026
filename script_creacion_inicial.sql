@@ -649,17 +649,17 @@ BEGIN
     FROM [gd_esquema].[maestra] m
         JOIN [JOINT_BASADOS].Tipos_De_Productos tp
             ON (tp.tipo = m.Tipo_Producto_Tipo_Producto)
-        JOIN [JOINT_BASADOS].Accesorios a
+        LEFT JOIN [JOINT_BASADOS].Accesorios a
             ON (m.Accesorio_Color_Accesorio = a.color
                 AND m.Accesorio_Talle_Accesorio = a.talle)
-        JOIN [JOINT_BASADOS].Bicicletas_Ventas bv
+        LEFT JOIN [JOINT_BASADOS].Bicicletas_Ventas bv
             ON (bv.cod_producto = m.Producto_Cod_Producto)
+    WHERE m.Producto_Cod_Producto IS NOT NULL;
 END;
 GO
 
 EXEC [JOINT_BASADOS].[Migrar_Productos];
 GO
-
 
 -- Hay q migrar previamente COD PRODUCTO Y NRO DE COMPRA
 CREATE PROCEDURE [JOINT_BASADOS].[Migrar_Detalles_Compras]
@@ -775,7 +775,7 @@ GO
 EXEC [JOINT_BASADOS].[Migrar_Detalles_Ventas];
 GO
 
-
+/*
 SELECT * FROM [JOINT_BASADOS].[Marcas]
 SELECT * FROM [JOINT_BASADOS].[Categorias_Accesorios]
 SELECT * FROM [JOINT_BASADOS].[Categorias_Bicicletas]
@@ -793,4 +793,5 @@ SELECT * FROM [JOINT_BASADOS].[Bicicletas_Ventas]
 SELECT * FROM [JOINT_BASADOS].[Bicicletas_Alquileres]
 SELECT * FROM [JOINT_BASADOS].[Repuestos]
 SELECT * FROM [JOINT_BASADOS].[Detalles_Reparaciones]
-
+SELECT * FROM [JOINT_BASADOS].[Productos]
+*/
