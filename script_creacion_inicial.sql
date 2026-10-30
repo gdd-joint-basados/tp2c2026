@@ -1062,5 +1062,8 @@ CREATE INDEX IX_Detalles_Reparaciones_reparacion
     ON [JOINT_BASADOS].[Detalles_Reparaciones] (reparacion_id);
 
 --Para el uso frecuente de busqueda de detalles de reparaciones que hayan usado tal repuesto con cod_repuesto
-CREATE INDEX IX_Detalles_Reparaciones_repuesto
-    ON [JOINT_BASADOS].[Detalles_Reparaciones] (cod_repuesto);
+CREATE INDEX IX_Compras_empleado
+    ON [JOINT_BASADOS].[Compras] (empleado_id);
+
+CREATE INDEX IX_Compras_proveedor
+    ON [JOINT_BASADOS].[Compras] (proveedor_id);
