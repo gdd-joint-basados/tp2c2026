@@ -821,3 +821,90 @@ SELECT * FROM [JOINT_BASADOS].[Clientes]
 SELECT * FROM [JOINT_BASADOS].[Ventas]
 SELECT * FROM [JOINT_BASADOS].[Detalles_Ventas]
 SELECT * FROM [JOINT_BASADOS].[Productos]
+
+
+
+-- =========================================
+            --CONSTRAINTS
+-- =========================================
+
+ALTER TABLE [JOINT_BASADOS].[Bicicletas_Alquileres]
+    ADD CONSTRAINT CHECK_Bicicletas_Alquileres_precios CHECK (precio_hora > 0 AND precio_dia > 0);
+
+ALTER TABLE [JOINT_BASADOS].[Repuestos]
+    ADD CONSTRAINT CHECK_Repuestos_precio CHECK (precio >= 0);
+
+ALTER TABLE [JOINT_BASADOS].[Detalles_Reparaciones]
+    ADD CONSTRAINT CHECK_Detalles_Reparaciones_cantidad CHECK (cantidad_repuesto > 0);
+
+ALTER TABLE [JOINT_BASADOS].[Detalles_Reparaciones]
+    ADD CONSTRAINT CHECK_Detalles_Reparaciones_subtotal
+        CHECK (subtotal = cantidad_repuesto * precio_unitario);
+
+
+-- =========================================
+                --TRIGGERS
+-- =========================================
+
+--Trigger en Alquileres: controlar que una bici no se alquile a dos clientes al mismo tiempo
+GO
+CREATE TRIGGER [JOINT_BASADOS].[trg_Alquileres_sin_solapamiento]
+    ON [JOINT_BASADOS].[Alquileres]
+    AFTER INSERT, UPDATE
+    AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+                 JOIN [JOINT_BASADOS].[Alquileres] a
+                      ON a.nro_serie_bicicleta = i.nro_serie_bicicleta
+                          AND a.nro_alquiler <> i.nro_alquiler
+                          AND a.fecha_inicio < COALESCE(i.fecha_devolucion_real, i.fecha_fin_pactada)
+                          AND i.fecha_inicio < COALESCE(a.fecha_devolucion_real, a.fecha_fin_pactada)
+    )
+        BEGIN
+            RAISERROR('La bicicleta ya tiene un alquiler en ese período.', 16, 1);
+            ROLLBACK TRANSACTION;
+        END
+END
+GO
+--Trigger en Productos:controla que bicicleta_venta_id apunte a la fila de Bicicletas_Ventas con el mismo cod_producto
+CREATE TRIGGER [JOINT_BASADOS].[trg_Productos_bicicleta_coherente]
+    ON [JOINT_BASADOS].[Productos]
+    AFTER INSERT, UPDATE
+    AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+                 JOIN [JOINT_BASADOS].[Bicicletas_Ventas] bv ON bv.id = i.bicicleta_venta_id
+        WHERE bv.cod_producto <> i.cod_producto
+    )
+        BEGIN
+            RAISERROR('bicicleta_venta_id no corresponde al cod_producto del producto.', 16, 1);
+            ROLLBACK TRANSACTION;
+        END
+END
+GO
+
+
+
+-- =========================================
+                --ÍNDICES
+-- =========================================
+
+--Creamos índices en FK, para mejorar los joins y para posibles campos de búsqueda frecuente.
+
+--Para el uso frecuente de busqueda de detalles de reparaciones que peretenezcan a reparación_id
+CREATE INDEX IX_Detalles_Reparaciones_reparacion
+    ON [JOINT_BASADOS].[Detalles_Reparaciones] (reparacion_id);
+
+--Para el uso frecuente de busqueda de detalles de reparaciones que hayan usado tal repuesto con cod_repuesto
+CREATE INDEX IX_Detalles_Reparaciones_repuesto
+    ON [JOINT_BASADOS].[Detalles_Reparaciones] (cod_repuesto);
+
+
+
+
