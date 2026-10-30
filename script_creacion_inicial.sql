@@ -1068,3 +1068,11 @@ CREATE INDEX IX_Compras_empleado
 
 CREATE INDEX IX_Compras_proveedor
     ON [JOINT_BASADOS].[Compras] (proveedor_id);
+
+-- Para uso frecuente de busqueda de clientes por cliente_id, ya que es una FK en varias tablas grandes (Ventas por ejemplo)
+CREATE INDEX IX_Clientes
+    ON [JOINT_BASADOS].[Clientes] (cliente_id);
+
+-- Para uso frecuente de busqueda de ventas segun su nro_venta
+CREATE INDEX IX_Ventas
+    ON [JOINT_BASADOS].[Ventas] (nro_venta);
