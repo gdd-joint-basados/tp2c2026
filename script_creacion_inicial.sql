@@ -826,7 +826,7 @@ BEGIN
             ROW_NUMBER() OVER (
                 PARTITION BY m.Reparacion_Nro_Reparacion, m.Repuesto_Cod_Repuesto
                 ORDER BY m.Detalle_Reparacion_Cantidad_Repuesto DESC,
-                         m.Detalle_Reparacion_Subtotal_Repuesto DESC,       -- desempate determinístico
+                         m.Detalle_Reparacion_Subtotal_Repuesto DESC,
                          m.Detalle_Reparacion_Precio_Unitario_Repuesto DESC
             ) AS rn
         FROM gd_esquema.Maestra m
@@ -1049,19 +1049,20 @@ BEGIN
 END
 GO
 
-
-
 -- =========================================
                 --ÍNDICES
 -- =========================================
 
 --Creamos índices en FK, para mejorar los joins y para posibles campos de búsqueda frecuente.
 
---Para el uso frecuente de busqueda de detalles de reparaciones que peretenezcan a reparación_id
+--Para el uso frecuente de busqueda de detalles de reparaciones que pertenezcan a reparación_id
 CREATE INDEX IX_Detalles_Reparaciones_reparacion
     ON [JOINT_BASADOS].[Detalles_Reparaciones] (reparacion_id);
 
 --Para el uso frecuente de busqueda de detalles de reparaciones que hayan usado tal repuesto con cod_repuesto
+CREATE INDEX IX_Detalles_Reparaciones_repuesto
+    ON [JOINT_BASADOS].[Detalles_Reparaciones] (cod_repuesto);
+
 CREATE INDEX IX_Compras_empleado
     ON [JOINT_BASADOS].[Compras] (empleado_id);
 
