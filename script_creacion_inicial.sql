@@ -1064,7 +1064,3 @@ CREATE INDEX IX_Detalles_Reparaciones_reparacion
 --Para el uso frecuente de busqueda de detalles de reparaciones que hayan usado tal repuesto con cod_repuesto
 CREATE INDEX IX_Detalles_Reparaciones_repuesto
     ON [JOINT_BASADOS].[Detalles_Reparaciones] (cod_repuesto);
-
-
-
-
