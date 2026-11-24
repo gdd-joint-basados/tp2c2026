@@ -1055,13 +1055,7 @@ GO
 
 --Creamos índices en FK, para mejorar los joins y para posibles campos de búsqueda frecuente.
 
---Para el uso frecuente de busqueda de detalles de reparaciones que pertenezcan a reparación_id
-CREATE INDEX IX_Detalles_Reparaciones_reparacion
-    ON [JOINT_BASADOS].[Detalles_Reparaciones] (reparacion_id);
 
---Para el uso frecuente de busqueda de detalles de reparaciones que hayan usado tal repuesto con cod_repuesto
-CREATE INDEX IX_Detalles_Reparaciones_repuesto
-    ON [JOINT_BASADOS].[Detalles_Reparaciones] (cod_repuesto);
 
 CREATE INDEX IX_Compras_empleado
     ON [JOINT_BASADOS].[Compras] (empleado_id);
@@ -1070,8 +1064,7 @@ CREATE INDEX IX_Compras_proveedor
     ON [JOINT_BASADOS].[Compras] (proveedor_id);
 
 -- Para uso frecuente de busqueda de clientes por cliente_id, ya que es una FK en varias tablas grandes (Ventas por ejemplo)
-CREATE INDEX IX_Clientes
-    ON [JOINT_BASADOS].[Clientes] (cliente_id);
+
 
 -- Para uso frecuente de busqueda de ventas segun su nro_venta
 CREATE INDEX IX_Ventas
