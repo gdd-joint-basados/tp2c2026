@@ -1,9 +1,9 @@
 USE GD2C_2026;
 GO
 
--- ============================================================================
--- 1. CREACIÓN DE DIMENSIONES
--- ============================================================================
+
+-- 1) CREACION DE DIMENSIONES
+
 
 CREATE TABLE [JOINT_BASADOS].[BI_Tiempo] (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -49,11 +49,10 @@ CREATE TABLE [JOINT_BASADOS].[BI_Tipo_Ingreso_Reparacion] (
 );
 GO
 
--- ============================================================================
--- 2. CREACIÓN DE TABLAS DE HECHOS
--- ============================================================================
 
--- Hechos de Ventas (resuelve vistas 1, 2, 3 y parte de 11)
+-- 2) CREACION DE TABLAS DE HECHOS
+
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Ventas] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     local_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Local](id),
@@ -65,19 +64,19 @@ CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Ventas] (
 );
 GO
 
--- Hechos de Alquileres (resuelve vistas 4, 5 y parte de 11)
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Alquileres] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     local_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Local](id),
     categoria_bicicleta_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Categoria_Bicicleta](id),
     cantidad_alquileres INT NOT NULL,
-    total_horas_alquiler DECIMAL(18,2) NOT NULL,
+    total_horas_alquiler DECIMAL(38,2) NOT NULL,
     facturacion_total DECIMAL(38,2) NOT NULL,
     PRIMARY KEY (tiempo_id, local_id, categoria_bicicleta_id)
 );
 GO
 
--- Hechos de Desvíos en Reparaciones (resuelve vista 6)
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Reparaciones] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     local_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Local](id),
@@ -87,7 +86,7 @@ CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Reparaciones] (
 );
 GO
 
--- Hechos de Repuestos utilizados en Reparaciones (resuelve vista 7)
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Repuestos_Reparaciones] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     categoria_repuesto_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Categoria_Repuesto](id),
@@ -96,7 +95,7 @@ CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Repuestos_Reparaciones] (
 );
 GO
 
--- Hechos de Ingresos por Reparaciones (resuelve vista 8 y parte de 11)
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Ingresos_Reparaciones] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     local_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Local](id),
@@ -106,7 +105,7 @@ CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Ingresos_Reparaciones] (
 );
 GO
 
--- Hechos de Compras (resuelve vistas 9 y 10)
+
 CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Compras] (
     tiempo_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Tiempo](id),
     local_id INT NOT NULL REFERENCES [JOINT_BASADOS].[BI_Local](id),
@@ -118,9 +117,9 @@ CREATE TABLE [JOINT_BASADOS].[BI_Hechos_Compras] (
 );
 GO
 
--- ============================================================================
--- 3. FUNCIÓN AUXILIAR PARA RANGO ETARIO
--- ============================================================================
+
+-- 3) FUNCIÓN AUXILIAR PARA RANGO ETARIO
+
 
 CREATE FUNCTION [JOINT_BASADOS].[BI_Obtener_Rango_Etario] (
     @fecha_nacimiento DATETIME2,
@@ -144,9 +143,9 @@ BEGIN
 END;
 GO
 
--- ============================================================================
--- 4. STORED PROCEDURES DE CARGA DE DIMENSIONES
--- ============================================================================
+
+-- 4) STORED PROCEDURES DE CARGA DE DIMENSIONES
+
 
 CREATE PROCEDURE [JOINT_BASADOS].[BI_Migrar_Tiempo]
 AS
@@ -222,9 +221,8 @@ BEGIN
 END;
 GO
 
--- ============================================================================
--- 5. STORED PROCEDURES DE CARGA DE HECHOS
--- ============================================================================
+
+-- 5) STORED PROCEDURES DE CARGA DE HECHOS
 
 CREATE PROCEDURE [JOINT_BASADOS].[BI_Migrar_Hechos_Ventas]
 AS
@@ -373,10 +371,11 @@ BEGIN
 END;
 GO
 
--- ============================================================================
--- 6. EJECUCIÓN DE LA MIGRACIÓN EN ORDEN
--- ============================================================================
 
+-- 6) EJECUCION DE LA MIGRACION
+
+BEGIN TRANSACTION
+BEGIN TRY
 EXEC [JOINT_BASADOS].[BI_Migrar_Tiempo];
 EXEC [JOINT_BASADOS].[BI_Migrar_Rango_Etario];
 EXEC [JOINT_BASADOS].[BI_Migrar_Tipo_Producto];
@@ -384,20 +383,27 @@ EXEC [JOINT_BASADOS].[BI_Migrar_Local];
 EXEC [JOINT_BASADOS].[BI_Migrar_Categoria_Bicicleta];
 EXEC [JOINT_BASADOS].[BI_Migrar_Categoria_Repuesto];
 EXEC [JOINT_BASADOS].[BI_Migrar_Tipo_Ingreso_Reparacion];
-
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Ventas];
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Alquileres];
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Reparaciones];
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Repuestos_Reparaciones];
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Ingresos_Reparaciones];
 EXEC [JOINT_BASADOS].[BI_Migrar_Hechos_Compras];
+COMMIT TRANSACTION
+PRINT 'Modelo BI creado correctamente'
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    THROW 50001, 'Error al cargar el modelo BI, se hizo rollback de toda la migracion', 1
+END CATCH
 GO
 
--- ============================================================================
--- 7. CREACIÓN DE LAS 11 VISTAS DE NEGOCIO
--- ============================================================================
 
--- 1. Facturación total mensual en ventas de cada local
+
+-- 7) CREACION DE LAS 11 VISTAS DE NEGOCIO
+
+
+-- vista 1: facturación total mensual en ventas de cada local
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_1_Facturacion_Mensual_Ventas] AS
 SELECT 
     t.anio,
@@ -410,7 +416,7 @@ JOIN [JOINT_BASADOS].[BI_Local] l ON l.id = hv.local_id
 GROUP BY t.anio, t.mes, l.nombre;
 GO
 
--- 2. Ticket promedio ($) de venta mensual por tipo de producto y rango etario del cliente
+-- vista 2: ticket promedio de venta mensual por tipo de producto y rango etario del cliente
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_2_Ticket_Promedio_Ventas] AS
 SELECT
     t.anio,
@@ -425,7 +431,7 @@ JOIN [JOINT_BASADOS].[BI_Rango_Etario] re ON re.id = hv.rango_etario_id
 GROUP BY t.anio, t.mes, tp.tipo, re.descripcion;
 GO
 
--- 3. Porcentaje de ventas trimestrales según tipo de producto por local
+-- vista 3: porcentaje de ventas trimestrales segun tipo de producto por local
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_3_Porcentaje_Ventas_Trimestral] AS
 SELECT
     t.anio,
@@ -443,7 +449,7 @@ JOIN [JOINT_BASADOS].[BI_Tipo_Producto] tp ON tp.id = hv.tipo_producto_id
 GROUP BY t.anio, t.trimestre, l.nombre, tp.tipo;
 GO
 
--- 4. Promedio de cantidad de horas de alquiler de bicicletas, por local y mes
+-- vista 4: promedio de cantidad de horas de alquiler de bicicletas, por local y mes
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_4_Promedio_Horas_Alquiler] AS
 SELECT 
     t.anio,
@@ -477,7 +483,7 @@ FROM Ranking_Categorias
 WHERE posicion <= 5;
 GO
 
--- 6. Desvío promedio de reparaciones (en días), entre fecha de entrega estimada y real, por local y trimestre
+-- vista 6: desvio promedio de reparaciones en dias entre fecha de entrega estimada y real, por local y trimestre
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_6_Desvio_Promedio_Reparaciones] AS
 SELECT
     t.anio,
@@ -490,7 +496,7 @@ JOIN [JOINT_BASADOS].[BI_Local] l ON l.id = hr.local_id
 GROUP BY t.anio, t.trimestre, l.nombre;
 GO
 
--- 7. Ranking de categoría de repuestos más utilizados por mes
+-- vista 7: ranking de categoria de repuestos mas utilizados por mes
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_7_Ranking_Repuestos_Mes] AS
 SELECT
     t.anio,
@@ -507,7 +513,7 @@ JOIN [JOINT_BASADOS].[BI_Categoria_Repuesto] cr ON cr.id = hrr.categoria_repuest
 GROUP BY t.anio, t.mes, cr.categoria;
 GO
 
--- 8. Porcentaje de facturación de reparaciones según el tipo de ingreso por trimestre
+-- vista 8: porcentaje de facturacion de reparaciones segun el tipo de ingreso por trimestre
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_8_Porcentaje_Ingresos_Reparaciones] AS
 SELECT
     t.anio,
@@ -523,7 +529,7 @@ JOIN [JOINT_BASADOS].[BI_Tipo_Ingreso_Reparacion] ti ON ti.id = hir.tipo_ingreso
 GROUP BY t.anio, t.trimestre, ti.descripcion;
 GO
 
--- 9. Promedio de unidades compradas según el tipo de producto por trimestre
+-- vista 9: promedio de unidades compradas segun el tipo de producto por trimestre
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_9_Promedio_Unidades_Compradas] AS
 SELECT
     t.anio,
@@ -536,7 +542,7 @@ JOIN [JOINT_BASADOS].[BI_Tipo_Producto] tp ON tp.id = hc.tipo_producto_id
 GROUP BY t.anio, t.trimestre, tp.tipo;
 GO
 
--- 10. Importe total de compras mensuales por local
+-- vista 10: importe total de compras mensuales por local
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_10_Compras_Mensuales_Local] AS
 SELECT
     t.anio,
@@ -549,7 +555,7 @@ JOIN [JOINT_BASADOS].[BI_Local] l ON l.id = hc.local_id
 GROUP BY t.anio, t.mes, l.nombre;
 GO
 
--- 11. Facturación mensual del negocio (ventas + alquileres + reparaciones) por local
+-- vista 11: facturacion mensual del negocio (ventas + alquileres + reparaciones) por local
 CREATE VIEW [JOINT_BASADOS].[BI_Vista_11_Facturacion_Total_Negocio] AS
 WITH Facturacion_Unificada AS (
     SELECT tiempo_id, local_id, SUM(facturacion_total) AS monto

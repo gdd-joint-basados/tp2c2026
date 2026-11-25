@@ -1,6 +1,51 @@
 USE GD2C_2026;
 GO
 
+-- 0. Eliminar objetos del modelo BI
+
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_1_Facturacion_Mensual_Ventas];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_2_Ticket_Promedio_Ventas];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_3_Porcentaje_Ventas_Trimestral];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_4_Promedio_Horas_Alquiler];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_5_Top5_Categorias_Alquiladas];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_6_Desvio_Promedio_Reparaciones];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_7_Ranking_Repuestos_Mes];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_8_Porcentaje_Ingresos_Reparaciones];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_9_Promedio_Unidades_Compradas];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_10_Compras_Mensuales_Local];
+DROP VIEW IF EXISTS [JOINT_BASADOS].[BI_Vista_11_Facturacion_Total_Negocio];
+GO
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Tiempo];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Rango_Etario];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Tipo_Producto];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Local];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Categoria_Bicicleta];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Categoria_Repuesto];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Tipo_Ingreso_Reparacion];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Ventas];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Alquileres];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Reparaciones];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Repuestos_Reparaciones];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Ingresos_Reparaciones];
+DROP PROCEDURE IF EXISTS [JOINT_BASADOS].[BI_Migrar_Hechos_Compras];
+GO
+DROP FUNCTION IF EXISTS [JOINT_BASADOS].[BI_Obtener_Rango_Etario];
+GO
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Ventas];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Alquileres];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Reparaciones];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Repuestos_Reparaciones];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Ingresos_Reparaciones];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Hechos_Compras];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Tiempo];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Rango_Etario];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Tipo_Producto];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Local];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Categoria_Bicicleta];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Categoria_Repuesto];
+DROP TABLE IF EXISTS [JOINT_BASADOS].[BI_Tipo_Ingreso_Reparacion];
+GO
+
 -- 1. Eliminar Triggers
 DROP TRIGGER IF EXISTS [JOINT_BASADOS].[trg_Alquileres_sin_solapamiento];
 DROP TRIGGER IF EXISTS [JOINT_BASADOS].[trg_Productos_bicicleta_coherente];
