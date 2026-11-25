@@ -15,7 +15,7 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[BI_Rango_Etario] (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    descripcion VARCHAR(50) NOT NULL
+    descripcion VARCHAR(255) NOT NULL
 );
 GO
 
@@ -45,7 +45,7 @@ GO
 
 CREATE TABLE [JOINT_BASADOS].[BI_Tipo_Ingreso_Reparacion] (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    descripcion VARCHAR(50) NOT NULL
+    descripcion VARCHAR(255) NOT NULL
 );
 GO
 
